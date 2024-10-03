@@ -42,7 +42,7 @@ void libera_lista(Lista *lista) {
     }
 }
 
-/* ----------------- Gerar as Permutações ----------------*/
+/* ----------------- Gerar as Permutações ---------------- */
 
 // Função que calcula a distância de um caminho dado
 int calcula_distancia(Lista *listaCidades[], int *permutacao, int n) {

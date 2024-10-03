@@ -3,20 +3,20 @@
 #include "item.h"
 
 struct item_{
-    int chave; //indexador
-    void *dados; //ponteiro para o dado
-    
+    int cidade1;
+    int cidade2; 
+    int distancia;
 };
 
-// *dados é um ponteiro para void porque ele recebe um tipo conforme a necessidade do cliente
-ITEM *item_criar (int chave, void *dados){
+ITEM *item_criar (int cidade1, int cidade2, int distancia){
     ITEM *item;
 
     item = (ITEM *) malloc(sizeof(ITEM));
 
     if (item != NULL){
-        item->chave = chave;
-        item->dados = dados;
+        item->cidade1 = cidade1;
+        item->cidade2 = cidade2;
+        item->distancia = distancia;
         return(item);
     }
     return(NULL);
@@ -31,24 +31,23 @@ bool item_apagar(ITEM **item){
     return(false);
 }
 
-int item_get_chave(ITEM *item){
+int item_get_cidade1(ITEM *item){
     if (item != NULL){
-        return(item->chave);
+        return(item->cidade1);
         exit(1);
     }
 }
 
-bool item_set_chave(ITEM *item, int chave){
+int item_get_cidade2(ITEM *item){
     if (item != NULL){
-        item->chave = chave;
-        return(true);
+        return(item->cidade2);
+        exit(1);
     }
-    return(false);
 }
 
-void *item_get_dados(ITEM *item){
+int item_get_distancia(ITEM *item){
     if (item != NULL){
-        return(item->dados);
+        return(item->distancia);
     }
-    return(NULL);
+    exit(1);
 }

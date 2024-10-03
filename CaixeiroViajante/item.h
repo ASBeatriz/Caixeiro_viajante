@@ -5,7 +5,7 @@
 
     typedef struct item_ ITEM;
 
-    ITEM *item_criar (int chave, void *dados);
+    ITEM *item_criar (int cidade1, int cidade2, int distancia);
     bool item_apagar (ITEM **item);
     int item_get_chave (ITEM *item);
     bool item_set_chave (ITEM *item, int chave);

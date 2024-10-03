@@ -45,11 +45,11 @@ int main(){
     // Lê o número de cidades, cidade inicial e quantidade de arestas
     scanf("%d %d %d", &numCidades, &cidadeInicial, &numArestas);
     
-    //aloca e inicializa as distâncias das cidades como 0
+    // Aloca e inicializa as distâncias das cidades como 0
     for (int i = 0; i < numCidades; i++)
         orgCidades[i].distancia = (int *)calloc(numCidades, sizeof(int));
     
-    // atribui as distancias entre as cidades
+    // Atribui as distancias entre as cidades
     for (int i = 0; i < numArestas; i++) {
         int cidadeA, cidadeB, distanciaAB;
         scanf("%d %d %d", &cidadeA, &cidadeB, &distanciaAB);
