@@ -17,6 +17,7 @@ void troca(int *a, int *b)
 }
 
 // Função que gera todas as permutações usando backtracking
+// A cidade inicial é fixa, então não fazemos permutação no índice 0
 void permutacao(LISTA *listaCidades[], int *cidades, int l, int r, int n, int *melhor_caminho, int *menor_distancia)
 {
     if (l == r)
@@ -59,6 +60,9 @@ int main(void)
         IDCidades[i] = i; // Índices de cidades começam em 0
     }
 
+    // Coloca a cidade inicial no primeiro índice
+    troca(&IDCidades[0], &IDCidades[cidadeInicial - 1]);
+
     // Cria a lista de adjacências para cada cidade
     LISTA *listaCidades[numCidades];
     for (int i = 0; i < numCidades; i++)
@@ -79,8 +83,8 @@ int main(void)
     int melhor_caminho[numCidades];
     int menor_distancia = DISTANCIA_MAXIMA;
 
-    // Chama a função de permutação
-    permutacao(listaCidades, IDCidades, 0, numCidades - 1, numCidades, melhor_caminho, &menor_distancia);
+    // Chama a função de permutação a partir da segunda cidade, fixando a primeira
+    permutacao(listaCidades, IDCidades, 1, numCidades - 1, numCidades, melhor_caminho, &menor_distancia);
 
     // Imprime o menor caminho e a menor distância
     printf("Menor distancia: %d\n", menor_distancia);
@@ -89,7 +93,8 @@ int main(void)
     {
         printf("%d ", melhor_caminho[i] + 1); // Adiciona 1 para imprimir índices começando em 1
     }
-    printf("\n");
+    // Adiciona a cidade inicial ao final para fechar o ciclo
+    printf("%d\n", melhor_caminho[0] + 1);
 
     // Libera a memória alocada para as listas
     for (int i = 0; i < numCidades; i++)
