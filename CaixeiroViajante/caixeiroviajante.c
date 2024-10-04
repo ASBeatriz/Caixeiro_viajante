@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "item.h"
-#include "pilha.h"
+#include "Lista_seq.h"
 
 typedef struct {
     int melhorRota[12];
