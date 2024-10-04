@@ -28,7 +28,7 @@ void permutacao(LISTA *listaCidades[], int *cidades, int l, int r, int n, int *m
             *menor_distancia = distancia_atual;
             for (int i = 0; i < n; i++)
             {
-                melhor_caminho[i] = cidades[i];
+                melhor_caminho[i] = cidades[i]; // Armazena o melhor caminho
             }
         }
     }
@@ -71,8 +71,8 @@ int main(void)
     for (int j = 0; j < numArestas; j++)
     {
         scanf("%d %d %d", &IDCidade1, &IDCidade2, &distancia);
-        insere_adjacencia(listaCidades[IDCidade1], IDCidade2, distancia);
-        insere_adjacencia(listaCidades[IDCidade2], IDCidade1, distancia); // Para grafo não direcionado
+        insere_adjacencia(listaCidades[IDCidade1 - 1], IDCidade2 - 1, distancia); // Ajusta para índice 0
+        insere_adjacencia(listaCidades[IDCidade2 - 1], IDCidade1 - 1, distancia); // Para grafo não direcionado
     }
 
     // Variáveis para armazenar o melhor caminho e a menor distância
@@ -87,7 +87,7 @@ int main(void)
     printf("Melhor caminho: ");
     for (int i = 0; i < numCidades; i++)
     {
-        printf("%d ", melhor_caminho[i]);
+        printf("%d ", melhor_caminho[i] + 1); // Adiciona 1 para imprimir índices começando em 1
     }
     printf("\n");
 

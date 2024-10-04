@@ -1,9 +1,19 @@
-all:
-	gcc item.c Lista_seq.c caixeiroviajante2.c -o caixeiro
+all: caixeiro
 
-run:
+item.o: item.c
+	gcc -c item.c -o item.o
+
+Lista_seq.o: Lista_seq.c
+	gcc -c Lista_seq.c -o Lista_seq.o
+
+caixeiroviajante2.o: caixeiroviajante2.c
+	gcc -c caixeiroviajante2.c -o caixeiroviajante2.o
+
+caixeiro: item.o Lista_seq.o caixeiroviajante2.o
+	gcc item.o Lista_seq.o caixeiroviajante2.o -o caixeiro
+
+run: caixeiro
 	./caixeiro
 
 clean:
-	rm *o caixeiro
-	
+	rm -f *.o caixeiro
