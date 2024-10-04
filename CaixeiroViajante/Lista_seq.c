@@ -5,174 +5,80 @@ struct lista{
     int inicio;
     int fim;
     int tamanho;
-    bool ordenada;
 };
 
-/* --------------------- FUNÇÕES AUXILIARES DAS FUNÇÕES ----------------------- */
-
-// achar a posição do menor número n, tal que seja maior ou igual ao indicado (chave)
-int lower_bound(LISTA *lista, int chave){
-    int meio, ini = lista->inicio, fim = lista->fim, ans = -1;
-    while(ini <= fim){
-        meio = (ini+fim)/2;
-        if(item_get_chave(lista->itens[meio]) >= chave){
-            ans = meio;
-            fim = meio - 1;
-        }
-        else{
-            ini = meio + 1;
-        }
-    }
-    return ans; //caso de não achar
-}
-
-//desloca parte da lista para a direita, deixando a posição pos livre
-void deslocar_dir(LISTA *lista, int pos){ 
-    // só desloco caso seja uma posição ocupada
-    if(pos > lista->fim) return;
-
-    for(int i = lista->fim+1; i>pos; i--){
-        lista->itens[i] = lista->itens[i-1];
-    }
-}
-
-/*  Desloca parte da lista para a esquerda (a partir de pos+1). Usada quando um item é apagado. */
-void deslocar_esq(LISTA *lista, int pos){ 
-
-    //só desloco se houver elementos após a posição indicada
-    if(pos >= lista->fim) return;
-
-    for(int i=pos; i<lista->fim; i++){
-        if(i == lista->fim){
-            lista->itens[i] = NULL;
-            break;
-        }
-        lista->itens[i] = lista->itens[i+1];    // cada posição recebe o valor do próx, exceto pelo último
-    }
-}
-
-bool inserir_posicao(LISTA *lista, ITEM *item, int pos){
-    if(lista != NULL && !lista_cheia(lista)){
-        if(pos <= (lista->fim) + 1){      //se a posição estiver na lista ou for após o último elemento
-            deslocar_dir(lista, pos);
-            lista->itens[pos] = item;
-            if(lista->tamanho != 0) lista->fim++;   //só incrementa o fim se não for o primeiro elemento
-            lista->tamanho++;
-            return true;
-        }
-    }
-    return false;
-}
-/* -------------------------------------------------------------- */
-
-LISTA *lista_criar(bool ordenada){
+LISTA *lista_criar(){
     LISTA *lista = (LISTA *)malloc(sizeof(LISTA));
     if(lista != NULL){
         lista->inicio = 0;
         lista->fim = 0;
         lista->tamanho = 0;
-        lista->ordenada = ordenada;
     }
     return lista;
 }
 
-bool inserir_nao_ordenado(LISTA *lista, ITEM *item){
+// bool inserir_posicao(LISTA *lista, ITEM *item, int pos){
+//     if(lista != NULL && !lista_cheia(lista)){
+//         if(pos <= (lista->fim) + 1){      //se a posição estiver na lista ou for após o último elemento
+//             deslocar_dir(lista, pos);
+//             lista->itens[pos] = item;
+//             if(lista->tamanho != 0) lista->fim++;   //só incrementa o fim se não for o primeiro elemento
+//             lista->tamanho++;
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+bool lista_inserir(LISTA *lista, ITEM *item){   // inserir não ordenado
     if(lista != NULL && !lista_cheia(lista)){
         int pos;
 
         //se for o primeiro item
-        if(lista->tamanho == 0) pos = 0;    
-        else pos = (lista->fim) + 1;
-
-        inserir_posicao(lista, item, pos);
+        if(lista->tamanho == 0){
+            lista->itens[lista->inicio] = item;
+        }  
+        else{
+            lista->fim++;   //só incrementa o fim se não for o primeiro elemento
+            lista->itens[lista->fim] = item;
+        }
+        lista->tamanho++;
+    
         return true;
     }
     return false;
 }
 
-bool inserir_ordenado(LISTA *lista, ITEM *item){ //ordenado por chave
-    int chave = item_get_chave(item);
-    if(lista != NULL && !lista_cheia(lista)){
-        int pos;
-        // caso em que a lista está vazia
-        if(lista->tamanho == 0) pos = 0;
-        else {
-            pos = lower_bound(lista, chave);
-
-            //caso em que o item inserido é maior que todos
-            if(pos == -1) pos = lista->fim + 1;
-        }
-
-        return inserir_posicao(lista, item, pos);
-    }
-    return false;
-}
-
-bool lista_inserir(LISTA *lista, ITEM *item){
-    return (lista->ordenada ? inserir_ordenado(lista, item) : inserir_nao_ordenado(lista, item));
-}
-
-
-ITEM *lista_remover(LISTA *lista, int chave){ 
+// Remove o item do ifm
+ITEM *lista_remover(LISTA *lista){ 
     if(lista != NULL && !lista_vazia(lista)){
-        ITEM *removido;
-        int pos;
-
-        //se for ordenada, faz busca binária (lower bound)
-        if(lista->ordenada){
-            pos = lower_bound(lista, chave);
-            if(pos == -1 || chave != item_get_chave(lista->itens[pos])) return NULL;   // se não achar o item
-        }
-        //senão, percorre a lista procurando a chave correspondente
-        else{
-            for(pos = lista->inicio; pos < lista->tamanho; pos++){
-                if(item_get_chave(lista->itens[pos]) == chave){
-                    break;
-                }
-                //se estiver na ultima incrementação do for e não tiver achado o item
-                if(pos + 1 == lista->tamanho) return NULL;  
-            }
-        }
-
-        removido = lista->itens[pos];
-        deslocar_esq(lista, pos);
+        ITEM *removido = lista->itens[lista->fim];
         lista->tamanho--;
         lista->fim--;
         return removido;
-
     }
     return NULL;
 }
 
-ITEM *lista_busca(LISTA *lista, int chave){
-    // se for ordenada, utiliza busca binária (lower bound)
-    if(lista->ordenada){
-        int pos = lower_bound(lista, chave); 
-        if(pos == -1 || item_get_chave(lista->itens[pos]) != chave) 
-            return NULL;
 
-        printf("chave %d na posição: %d\n", chave, pos);
-        return lista->itens[pos];
-    }
-    // senão, percorre a lista até achar
-    else{
-        if(lista != NULL){
-            for(int pos = lista->inicio; pos < lista->tamanho; pos++){
-                if(item_get_chave(lista->itens[pos]) == chave){
-                    printf("chave %d na posição: %d\n", chave, pos);
-                    return lista->itens[pos];
-                }
-            }
-        }
-        return NULL;
-    }
-}
+/* Verifica_aresta já faz o trabalho de lista_busca */
+// ITEM *lista_busca(LISTA *lista, int chave){
+//     if(lista != NULL){
+//         for(int pos = lista->inicio; pos < lista->tamanho; pos++){
+//             if(item_get_chave(lista->itens[pos]) == chave){
+//                 printf("chave %d na posição: %d\n", chave, pos);
+//                 return lista->itens[pos];
+//             }
+//         }
+//     }
+//     return NULL;
+// }
 
 bool lista_apagar(LISTA **lista){ 
     if(*lista == NULL) return true;
 
     while((*lista)->tamanho != 0){
-        ITEM *removido = lista_remover(*lista, item_get_chave((*lista)->itens[(*lista)->fim]));
+        ITEM *removido = lista_remover(*lista);
         item_apagar(&removido);
     }
     free(*lista);
@@ -204,14 +110,37 @@ void lista_imprimir(LISTA* lista){
     if(lista != NULL){
         if(lista_vazia(lista)) printf("lista vazia!\n");
         else{
-            int pos = lista->inicio;
-            for(int i=0; i<lista->tamanho; i++){
-                int val = *(int *)item_get_dados(lista->itens[pos]);
-                printf("%d ", val);
-                pos++;
+            printf("Arestas: \n");
+            for(int pos = lista->inicio; pos < lista->tamanho; pos++){
+                int c1 = item_get_cidade1(lista->itens[pos]);
+                int c2 = item_get_cidade2(lista->itens[pos]);
+                int dist = item_get_distancia(lista->itens[pos]);
+                printf("C1: %d C2: %d dist: %d\n", c1, c2, dist);
             }
             printf("\n");
         }
     }
 }
 
+/*
+INT VERIFICA_ARESTA(int cidade1, int cidade2)
+    PARA i=0 até i=[TAM_LISTA], i++
+        SE  ((aresta[i]->indice1 == cidade1 || aresta[i]->indice2 == cidade1) &&  
+            (aresta[i]->indice1 == cidade2 || aresta[i]->indice2 == cidade2))
+                return aresta[i]->distancia
+    
+    return -1
+*/
+
+int verifica_aresta(LISTA *arestas, int cidade1, int cidade2){
+    int tamanho = arestas->tamanho;
+    // percorre todas as arestas até achar a aresta das cidades informadas
+    for(int i; i<tamanho; i++){
+        int indice1 = item_get_cidade1(arestas->itens[i]);
+        int indice2 = item_get_cidade2(arestas->itens[i]);
+        if(((indice1 == cidade1) || (indice2 == cidade1)) && ((indice1 == cidade2) || (indice2 == cidade2))){
+            return item_get_distancia(arestas->itens[i]);
+        }
+    }
+    return -1;  // caso não haja caminho entre as cidades   
+}

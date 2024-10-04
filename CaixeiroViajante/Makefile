@@ -1,5 +1,5 @@
 all:
-	gcc item.c pilha.c caixeiroviajante.c -o caixeiro
+	gcc item.c Lista_seq.c caixeiroviajante2.c -o caixeiro
 
 run:
 	./caixeiro
