@@ -6,6 +6,7 @@
 #include "item.h"
 #define TAM_MAX 100
 #define ERRO -1
+#define DISTANCIA_MAXIMA 10000
 
 typedef struct adjacencia Adjacencia;
 typedef struct lista LISTA;
@@ -15,6 +16,7 @@ LISTA* cria_lista();
 void insere_adjacencia(LISTA *lista, int cidade, int distancia);
 void libera_lista(LISTA *lista);
 int calcula_distancia(LISTA *listaCidades[], int *permutacao, int n);
+int obter_distancia(LISTA *lista, int cidade);
 
 LISTA *lista_criar();
 bool lista_inserir(LISTA *lista, ITEM *item);

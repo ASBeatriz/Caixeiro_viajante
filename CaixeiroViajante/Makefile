@@ -12,6 +12,12 @@ caixeiroviajante2.o: caixeiroviajante2.c
 caixeiro: item.o Lista_seq.o caixeiroviajante2.o
 	gcc item.o Lista_seq.o caixeiroviajante2.o -o caixeiro
 
+# caixeiroviajanteotimo.o: caixeiroviajanteotimo.c
+# 	gcc -c caixeiroviajanteotimo.c -o caixeiroviajanteotimo.o
+
+# caixeiro: item.o Lista_seq.o caixeiroviajanteotimo.o
+# 	gcc item.o Lista_seq.o caixeiroviajanteotimo.o -o caixeiro
+
 run: caixeiro
 	./caixeiro
 

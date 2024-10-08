@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "Lista_seq.h"
 
@@ -84,7 +85,9 @@ int main(void)
     int menor_distancia = DISTANCIA_MAXIMA;
 
     // Chama a função de permutação a partir da segunda cidade, fixando a primeira
+    clock_t inicio = clock();
     permutacao(listaCidades, IDCidades, 1, numCidades - 1, numCidades, melhor_caminho, &menor_distancia);
+    clock_t fim = clock();
 
     // Imprime o menor caminho e a menor distância
     printf("Menor distancia: %d\n", menor_distancia);
@@ -95,6 +98,10 @@ int main(void)
     }
     // Adiciona a cidade inicial ao final para fechar o ciclo
     printf("%d\n", melhor_caminho[0] + 1);
+
+    // Valores de tempo
+    double tempo_gasto = (double)(fim - inicio) / CLOCKS_PER_SEC;
+    printf("Tempo de execucao: %f segundos\n", tempo_gasto);
 
     // Libera a memória alocada para as listas
     for (int i = 0; i < numCidades; i++)

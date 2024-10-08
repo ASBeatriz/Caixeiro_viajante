@@ -51,6 +51,18 @@ void libera_lista(LISTA *lista) {
     free(lista);
 }
 
+// Função para buscar a distância entre duas cidades
+int obter_distancia(LISTA *lista, int cidade) {
+    Adjacencia *adj = lista->inicio;
+    while (adj != NULL) {
+        if (adj->cidade == cidade) {
+            return adj->distancia;
+        }
+        adj = adj->prox;
+    }
+    return DISTANCIA_MAXIMA; // Retorna infinito se não houver conexão
+}
+
 // Função que calcula a distância de um caminho dado
 int calcula_distancia(LISTA *listaCidades[], int *permutacao, int n) {
     int distancia_total = 0;
