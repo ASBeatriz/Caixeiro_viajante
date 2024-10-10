@@ -8,14 +8,6 @@
 
 #define DISTANCIA_MAXIMA 10000
 
-// Função que troca dois elementos de um array
-void troca(int *a, int *b)
-{
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
 // Função que gera o Branch and Bound
 void branch_and_bound(LISTA *listaCidades[], int *cidades, int n, int nivel, int distancia_atual, int *menor_distancia, int *melhor_caminho, bool visitado[], int cidadeInicial)
 {
@@ -43,14 +35,18 @@ void branch_and_bound(LISTA *listaCidades[], int *cidades, int n, int nivel, int
     // Explora todos os caminhos possíveis
     for (int i = 0; i < n; i++)
     {
+        // Para cada cidade não visitada, tenta adicionar no caminho
         if (!visitado[i])
         {
+            // marca como visitada e adiciona no array de cidades representando o caminho
             visitado[i] = true;
             cidades[nivel] = i;
 
             // Calcula a nova distância para a próxima cidade
             int cidade_anterior = (nivel == 0)? cidadeInicial : cidades[nivel - 1]; //se for a segunda cidade do caminho, verifica sua distância com a cidadeInicial
             int nova_distancia = distancia_atual + obter_distancia(listaCidades[cidade_anterior], i);
+
+            // Se for uma cidade válida, prossegue a construção do caminho a partir dela
             if (nova_distancia < *menor_distancia)
             {
                 branch_and_bound(listaCidades, cidades, n, nivel + 1, nova_distancia, menor_distancia, melhor_caminho, visitado, cidadeInicial);
