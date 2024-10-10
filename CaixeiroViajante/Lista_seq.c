@@ -73,34 +73,17 @@ int calcula_distancia(LISTA *listaCidades[], int *permutacao, int n) {
         int proxima_cidade = permutacao[i + 1];
         
         // Busca a distância entre cidade_atual e proxima_cidade na lista de adjacências
-        Adjacencia *adj = listaCidades[cidade_atual]->inicio;
-        int distancia_encontrada = 0;
-        while (adj != NULL) {
-            if (adj->cidade == proxima_cidade) {
-                distancia_total += adj->distancia;
-                distancia_encontrada = 1;
-                break;
-            }
-            adj = adj->prox;
-        }
+        distancia_total += obter_distancia(listaCidades[cidade_atual], proxima_cidade);
         
-        if (!distancia_encontrada) return INT_MAX; // Se não encontrar caminho, distância é infinita
+        if (distancia_total >= DISTANCIA_MAXIMA) return INT_MAX; // Se não encontrar caminho, distância é infinita
     }
 
     // Volta para a cidade inicial
     int ultima_cidade = permutacao[n - 1];
     int primeira_cidade = permutacao[0];
-    Adjacencia *adj = listaCidades[ultima_cidade]->inicio;
-    int distancia_encontrada = 0;
-    while (adj != NULL) {
-        if (adj->cidade == primeira_cidade) {
-            distancia_total += adj->distancia;
-            distancia_encontrada = 1;
-            break;
-        }
-        adj = adj->prox;
-    }
+
+    distancia_total += obter_distancia(listaCidades[ultima_cidade], primeira_cidade);
     
-    if (!distancia_encontrada) return INT_MAX; // Se não encontrar caminho, distância é infinita
+    if (distancia_total >= DISTANCIA_MAXIMA) return INT_MAX; // Se não encontrar caminho, distância é infinita
     return distancia_total;
 }
