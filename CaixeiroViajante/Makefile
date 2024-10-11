@@ -1,22 +1,25 @@
-all: caixeiro
+all: pcv pcv_otimo
 
 Lista.o: Lista.c
-	gcc -c Lista.c -o Lista.o
+	gcc -c -Wall -Wextra -g Lista.c -o Lista.o
 
-# caixeiroviajante2.o: caixeiroviajante2.c
-# 	gcc -c caixeiroviajante2.c -o caixeiroviajante2.o
+pcv.o: pcv.c
+	gcc -c -Wall -Wextra -g pcv.c -o pcv.o
 
-# caixeiro: Lista.o caixeiroviajante2.o
-# 	gcc Lista.o caixeiroviajante2.o -o caixeiro
+pcv: Lista.o pcv.o
+	gcc -Wall -Wextra -g Lista.o pcv.o -o pcv
 
-caixeiroviajanteotimo.o: caixeiroviajanteotimo.c
-	gcc -c caixeiroviajanteotimo.c -o caixeiroviajanteotimo.o
+pcv_otimo.o: pcv_otimo.c
+	gcc -c -Wall -Wextra -g pcv_otimo.c -o pcv_otimo.o
 
-caixeiro: Lista.o caixeiroviajanteotimo.o
-	gcc Lista.o caixeiroviajanteotimo.o -o caixeiro
+pcv_otimo: Lista.o pcv_otimo.o
+	gcc -Wall -Wextra -g Lista.o pcv_otimo.o -o pcv_otimo
 
-run: caixeiro
-	./caixeiro
+run_pcv: pcv
+	./pcv
+
+run_pcv_otimo: pcv_otimo
+	./pcv_otimo
 
 clean:
-	rm -f *.o caixeiro
+	rm -f *.o pcv pcv_otimo

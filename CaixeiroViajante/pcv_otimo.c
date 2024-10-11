@@ -9,7 +9,7 @@
     Função que aplica o algoritmo Branch and Bound.
     Parâmetros:
         - listaCidades: vetor de listas de adjacências das cidades
-        - cidades: vetor com as cidades do percurso
+        - cidades: vetor com as cidades do percurso (exceto a inicial)
         - n: número total de cidades
         - nivel: posição atual no percurso
         - distancia_atual: distância acumulada até o momento
@@ -25,26 +25,23 @@
 */
 void branch_and_bound(LISTA *listaCidades[], int *cidades, int n, int nivel, int distancia_atual, int *menor_distancia, int *melhor_caminho, bool visitado[], int cidadeInicial)
 {
+    // Caso em que todas as cidades foram adicionadas
     if (nivel == n-1)
     {
         int ultima_cidade = cidades[n - 2];
-        int distancia_final = lista_obter_distancia(listaCidades[ultima_cidade], cidadeInicial);
+        distancia_atual += lista_obter_distancia(listaCidades[ultima_cidade], cidadeInicial);
 
-        if (distancia_final != DISTANCIA_MAXIMA)
+        if (distancia_atual < *menor_distancia)
         {
-            distancia_atual += distancia_final;
-            if (distancia_atual < *menor_distancia)
+            *menor_distancia = distancia_atual;
+            for (int i = 0; i < n-1; i++)
             {
-                *menor_distancia = distancia_atual;
-                for (int i = 0; i < n-1; i++)
-                {
-                    melhor_caminho[i] = cidades[i];
-                }
+                melhor_caminho[i] = cidades[i];
             }
         }
         return;
     }
-
+    // loop para identificar as cidades que ainda não foram adicionadas
     for (int i = 0; i < n; i++)
     {
         if (!visitado[i])
