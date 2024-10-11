@@ -3,19 +3,32 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "Lista_seq.h"
-#include "item.h"
+#include "Lista.h"
 
-#define DISTANCIA_MAXIMA 10000
-
-// Função que gera o Branch and Bound
+/*
+    Função que aplica o algoritmo Branch and Bound.
+    Parâmetros:
+        - listaCidades: vetor de listas de adjacências das cidades
+        - cidades: vetor com as cidades do percurso
+        - n: número total de cidades
+        - nivel: posição atual no percurso
+        - distancia_atual: distância acumulada até o momento
+        - menor_distancia: menor distância encontrada até agora
+        - melhor_caminho: vetor que armazena o melhor caminho encontrado
+        - visitado: vetor auxiliar para indicar se uma cidade foi visitada
+        - cidadeInicial: cidade de origem
+    Funcionamento:
+        A função constrói o percurso a partir da segunda cidade até a penúltima. Em cada nível, para cada 
+        cidade não visitada, calcula a distância com a anterior. Se a distância não ultrapassar a menor 
+        encontrada, a função é chamada recursivamente para o próximo nível. Quando todas as cidades são 
+        visitadas, verifica se o caminho é melhor que o atual e o atualiza, se necessário.
+*/
 void branch_and_bound(LISTA *listaCidades[], int *cidades, int n, int nivel, int distancia_atual, int *menor_distancia, int *melhor_caminho, bool visitado[], int cidadeInicial)
 {
     if (nivel == n-1)
     {
-        // Adiciona a volta para a cidade inicial
         int ultima_cidade = cidades[n - 2];
-        int distancia_final = obter_distancia(listaCidades[ultima_cidade], cidadeInicial);
+        int distancia_final = lista_obter_distancia(listaCidades[ultima_cidade], cidadeInicial);
 
         if (distancia_final != DISTANCIA_MAXIMA)
         {
@@ -32,44 +45,43 @@ void branch_and_bound(LISTA *listaCidades[], int *cidades, int n, int nivel, int
         return;
     }
 
-    // Explora todos os caminhos possíveis
     for (int i = 0; i < n; i++)
     {
-        // Para cada cidade não visitada, tenta adicionar no caminho
         if (!visitado[i])
         {
-            // marca como visitada e adiciona no array de cidades representando o caminho
             visitado[i] = true;
             cidades[nivel] = i;
 
-            // Calcula a nova distância para a próxima cidade
-            int cidade_anterior = (nivel == 0)? cidadeInicial : cidades[nivel - 1]; //se for a segunda cidade do caminho, verifica sua distância com a cidadeInicial
-            int nova_distancia = distancia_atual + obter_distancia(listaCidades[cidade_anterior], i);
+            int cidade_anterior = (nivel == 0)? cidadeInicial : cidades[nivel - 1]; 
+            int nova_distancia = distancia_atual + lista_obter_distancia(listaCidades[cidade_anterior], i);
 
-            // Se for uma cidade válida, prossegue a construção do caminho a partir dela
             if (nova_distancia < *menor_distancia)
             {
                 branch_and_bound(listaCidades, cidades, n, nivel + 1, nova_distancia, menor_distancia, melhor_caminho, visitado, cidadeInicial);
             }
 
-            visitado[i] = false; // Backtrack
+            visitado[i] = false; // Backtracking
         }
     }
 }
 
+/*
+    Função principal que lê os dados de entrada, inicializa as estruturas de dados, 
+    executa o algoritmo Branch and Bound e imprime o resultado.
+*/
 int main(void)
 {
     int numCidades, cidadeInicial, numArestas;
 
-    // Lê o número de cidades, cidade inicial e quantidade de arestas
     scanf("%d %d %d", &numCidades, &cidadeInicial, &numArestas);
 
+    // Preenche o vetor com as identificações das cidades
     int IDCidades[numCidades - 1];
     int posArray = 0;
     for (int i = 0; i < numCidades; i++)
     {
         if(i != (cidadeInicial - 1)){
-            IDCidades[posArray] = i; //pula a cidade inicial no array de identificação das cidades
+            IDCidades[posArray] = i; // Pula a cidade inicial
             posArray++;
         }
     }
@@ -78,7 +90,7 @@ int main(void)
     LISTA *listaCidades[numCidades];
     for (int i = 0; i < numCidades; i++)
     {
-        listaCidades[i] = cria_lista();
+        listaCidades[i] = lista_criar();
     }
 
     // Leitura das distâncias entre as cidades
@@ -86,24 +98,26 @@ int main(void)
     for (int j = 0; j < numArestas; j++)
     {
         scanf("%d %d %d", &IDCidade1, &IDCidade2, &distancia);
-        insere_adjacencia(listaCidades[IDCidade1 - 1], IDCidade2 - 1, distancia);
-        insere_adjacencia(listaCidades[IDCidade2 - 1], IDCidade1 - 1, distancia); // Para grafo não direcionado
+        lista_inserir_adjacencia(listaCidades[IDCidade1 - 1], IDCidade2 - 1, distancia);
+        lista_inserir_adjacencia(listaCidades[IDCidade2 - 1], IDCidade1 - 1, distancia); // Para grafo não direcionado
     }
 
-    // Variáveis para armazenar o melhor caminho e a menor distância
-    int melhor_caminho[numCidades];
-    int menor_distancia = DISTANCIA_MAXIMA;
+    // Marca as cidades como não visitada inicialmente, exceto a inicial
     bool visitado[numCidades];
     for (int i = 0; i < numCidades; i++)
     {
         visitado[i] = false;
     }
-    visitado[cidadeInicial - 1] = true; // Cidade inicial já está visitada
+    visitado[cidadeInicial - 1] = true;
+    
+    // Variáveis para armazenar a solução
+    int melhor_caminho[numCidades];
+    int menor_distancia = DISTANCIA_MAXIMA;
 
     // Captura o tempo de início da execução
     clock_t inicio = clock();
 
-    // Chama o algoritmo Branch and Bound a partir da segunda cidade
+    // Chama o algoritmo Branch and Bound
     branch_and_bound(listaCidades, IDCidades, numCidades, 0, 0, &menor_distancia, melhor_caminho, visitado, cidadeInicial-1);
 
     // Captura o tempo de fim da execução
@@ -112,23 +126,22 @@ int main(void)
     // Calcula o tempo gasto
     double tempo_gasto = (double)(fim - inicio) / CLOCKS_PER_SEC;
 
-    // Imprime o menor caminho e a menor distância
+    // Imprime o menor caminho, a menor distância e o tempo de execução
     printf("Menor distancia: %d\n", menor_distancia);
     printf("Melhor caminho: ");
     printf("%d ", cidadeInicial);
     for (int i = 0; i < numCidades-1; i++)
     {
-        printf("%d ", melhor_caminho[i] + 1); // Adiciona 1 para imprimir índices começando em 1
+        printf("%d ", melhor_caminho[i] + 1); // Adiciona 1, pois os índices começam em 0
     }
     printf("%d\n", cidadeInicial);
 
-    // Imprime o tempo de execução
     printf("Tempo de execucao: %f segundos\n", tempo_gasto);
 
     // Libera a memória alocada para as listas
     for (int i = 0; i < numCidades; i++)
     {
-        libera_lista(listaCidades[i]);
+        lista_apagar(listaCidades[i]);
     }
 
     return 0;

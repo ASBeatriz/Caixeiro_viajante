@@ -4,10 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "Lista_seq.h"
-
-// Define uma constante para a maior distância possível (representa "infinito")
-#define DISTANCIA_MAXIMA 10000
+#include "Lista.h"
 
 // Função que troca dois elementos de um array
 void troca(int *a, int *b)
@@ -24,7 +21,7 @@ void permutacao(LISTA *listaCidades[], int *cidades, int l, int r, int n, int *m
     if (l == r)
     {
         // Calcula a distância total para a permutação atual
-        int distancia_atual = calcula_distancia(listaCidades, cidades, n);
+        int distancia_atual = lista_calcular_distancia(listaCidades, cidades, n);
         if (distancia_atual < *menor_distancia)
         {
             *menor_distancia = distancia_atual;
@@ -68,7 +65,7 @@ int main(void)
     LISTA *listaCidades[numCidades];
     for (int i = 0; i < numCidades; i++)
     {
-        listaCidades[i] = cria_lista();
+        listaCidades[i] = lista_criar();
     }
 
     // Leitura das distâncias entre as cidades
@@ -76,8 +73,8 @@ int main(void)
     for (int j = 0; j < numArestas; j++)
     {
         scanf("%d %d %d", &IDCidade1, &IDCidade2, &distancia);
-        insere_adjacencia(listaCidades[IDCidade1 - 1], IDCidade2 - 1, distancia); // Ajusta para índice 0
-        insere_adjacencia(listaCidades[IDCidade2 - 1], IDCidade1 - 1, distancia); // Para grafo não direcionado
+        lista_inserir_adjacencia(listaCidades[IDCidade1 - 1], IDCidade2 - 1, distancia); // Ajusta para índice 0
+        lista_inserir_adjacencia(listaCidades[IDCidade2 - 1], IDCidade1 - 1, distancia); // Para grafo não direcionado
     }
 
     // Variáveis para armazenar o melhor caminho e a menor distância
@@ -106,7 +103,7 @@ int main(void)
     // Libera a memória alocada para as listas
     for (int i = 0; i < numCidades; i++)
     {
-        libera_lista(listaCidades[i]);
+        lista_apagar(listaCidades[i]);
     }
 
     return 0;

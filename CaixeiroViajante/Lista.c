@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "Lista_seq.h"
+#include "Lista.h"
 
 // Estrutura do nó da lista de adjacência (oculta do usuário do TAD)
 struct adjacencia {
@@ -16,7 +16,7 @@ struct lista {
 };
 
 // Função para criar a lista de adjacências
-LISTA* cria_lista() {
+LISTA* lista_criar() {
     LISTA *lista = (LISTA*) malloc(sizeof(LISTA));
     if (lista != NULL) {
         lista->inicio = NULL;
@@ -25,7 +25,7 @@ LISTA* cria_lista() {
 }
 
 // Função para criar um nó de adjacência
-Adjacencia* cria_adjacencia(int cidade, int distancia) {
+Adjacencia* lista_criar_adjacencia(int cidade, int distancia) {
     Adjacencia *nova = (Adjacencia*) malloc(sizeof(Adjacencia));
     nova->cidade = cidade;
     nova->distancia = distancia;
@@ -34,14 +34,14 @@ Adjacencia* cria_adjacencia(int cidade, int distancia) {
 }
 
 // Função para inserir uma adjacência na lista de uma cidade
-void insere_adjacencia(LISTA *lista, int cidade, int distancia) {
-    Adjacencia *nova = cria_adjacencia(cidade, distancia);
+void lista_inserir_adjacencia(LISTA *lista, int cidade, int distancia) {
+    Adjacencia *nova = lista_criar_adjacencia(cidade, distancia);
     nova->prox = lista->inicio;
     lista->inicio = nova;
 }
 
 // Função para liberar a memória de uma lista de adjacências
-void libera_lista(LISTA *lista) {
+void lista_apagar(LISTA *lista) {
     Adjacencia *atual = lista->inicio;
     while (atual != NULL) {
         Adjacencia *temp = atual;
@@ -52,7 +52,7 @@ void libera_lista(LISTA *lista) {
 }
 
 // Função para buscar a distância entre duas cidades
-int obter_distancia(LISTA *lista, int cidade) {
+int lista_obter_distancia(LISTA *lista, int cidade) {
     Adjacencia *adj = lista->inicio;
     while (adj != NULL) {
         if (adj->cidade == cidade) {
@@ -64,7 +64,7 @@ int obter_distancia(LISTA *lista, int cidade) {
 }
 
 // Função que calcula a distância de um caminho dado
-int calcula_distancia(LISTA *listaCidades[], int *permutacao, int n) {
+int lista_calcular_distancia(LISTA *listaCidades[], int *permutacao, int n) {
     int distancia_total = 0;
 
     // Percorre todas as cidades da permutação
@@ -73,17 +73,17 @@ int calcula_distancia(LISTA *listaCidades[], int *permutacao, int n) {
         int proxima_cidade = permutacao[i + 1];
         
         // Busca a distância entre cidade_atual e proxima_cidade na lista de adjacências
-        distancia_total += obter_distancia(listaCidades[cidade_atual], proxima_cidade);
+        distancia_total += lista_obter_distancia(listaCidades[cidade_atual], proxima_cidade);
         
-        if (distancia_total >= DISTANCIA_MAXIMA) return INT_MAX; // Se não encontrar caminho, distância é infinita
+        if (distancia_total >= DISTANCIA_MAXIMA) return DISTANCIA_MAXIMA; // Se não encontrar caminho, distância é infinita
     }
 
     // Volta para a cidade inicial
     int ultima_cidade = permutacao[n - 1];
     int primeira_cidade = permutacao[0];
 
-    distancia_total += obter_distancia(listaCidades[ultima_cidade], primeira_cidade);
+    distancia_total += lista_obter_distancia(listaCidades[ultima_cidade], primeira_cidade);
     
-    if (distancia_total >= DISTANCIA_MAXIMA) return INT_MAX; // Se não encontrar caminho, distância é infinita
+    if (distancia_total >= DISTANCIA_MAXIMA) return DISTANCIA_MAXIMA; // Se não encontrar caminho, distância é infinita
     return distancia_total;
 }
